@@ -7,7 +7,7 @@ import SignIn from "./pages/SignIn";
 import NotFoundPage from "./pages/NotFoundPage";
 
 const PrivateRoutes = () => {
-  const user = false;
+  const user = localStorage.getItem("email");
 
   return user ? (
     <div>
