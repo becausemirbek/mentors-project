@@ -5,7 +5,8 @@ interface ContextI {
   loading: boolean;
   error: any;
   currentUser: any;
-  handleSignIn: any;
+  handleSignIn: any; // (data: any) => void;
+  handleSignUp: any; // (data: any, navigate: (value: string) => void) => void;
 }
 
 const initVal = {
@@ -13,6 +14,7 @@ const initVal = {
   error: "",
   currentUser: "",
   handleSignIn: () => {},
+  handleSignUp: () => {},
 };
 
 export const authContext = createContext<ContextI>(initVal);
@@ -26,7 +28,7 @@ interface UserI {
 
 const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<string>("");
-  const [error, setError] = useState<boolean>(false);
+  const [error, setError] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleSignIn = async (
@@ -35,11 +37,30 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
   ) => {
     setLoading(true);
     try {
-      const { data } = await axios.post(`${API}/account/login`, user);
+      const { data } = await axios.post(`${API}/account/login/`, user);
       localStorage.setItem("tokens", JSON.stringify(data));
       localStorage.setItem("email", user.email);
+      navigate("/");
     } catch (error) {
       console.log(error, "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignUp = async (
+    user: UserI,
+    navigate: (value: string) => void
+  ) => {
+    setLoading(true);
+    try {
+      await axios.post(`${API}/account/register/`, user);
+      navigate("/sign-in");
+    } catch (error) {
+      console.log(error, "error");
+      setError(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -50,6 +71,7 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
         error,
         currentUser,
         handleSignIn,
+        handleSignUp,
       }}
     >
       {children}

@@ -5,6 +5,8 @@ import Products from "./pages/Products";
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import NotFoundPage from "./pages/NotFoundPage";
+import CreateCategory from "./pages/CreateCategory";
+import CreateProduct from "./pages/CreateProduct";
 
 const PrivateRoutes = () => {
   const user = localStorage.getItem("email");
@@ -28,6 +30,8 @@ const Routing = () => {
         <Route path="/" element={<Products />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/create-category" element={<CreateCategory />} />
+        <Route path="/create-product" element={<CreateProduct />} />
       </Route>
     </Routes>
   );

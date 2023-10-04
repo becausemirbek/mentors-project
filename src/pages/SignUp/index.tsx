@@ -1,5 +1,8 @@
 import { Button, TextField } from "@mui/material";
+import { useContext } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { authContext } from "../../context/authContext";
 
 const SignUp = () => {
   const {
@@ -10,10 +13,12 @@ const SignUp = () => {
     watch,
   } = useForm();
   const pwd = watch("password");
+  const { handleSignUp } = useContext(authContext);
+  const navigate = useNavigate();
 
   const onSubmit = (data: any) => {
     // /sign-up
-    console.log(data);
+    handleSignUp(data, navigate);
   };
 
   return (
@@ -82,6 +87,11 @@ const SignUp = () => {
             />
           )}
         />
+        <div>
+          <p>
+            Already have an account? <Link to="/sign-in">Sign in</Link>
+          </p>
+        </div>
 
         <Button type="submit" variant="outlined">
           Submit

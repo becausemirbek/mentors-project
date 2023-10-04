@@ -2,7 +2,8 @@ import React, { useContext } from "react";
 import { Button, TextField } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import { authContext } from "../../context/authContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface SignInI {
   email: string;
@@ -71,7 +72,11 @@ const SignIn = () => {
             />
           )}
         />
-
+        <div>
+          <p>
+            New to our site? <Link to="/sign-up">Sign up</Link>
+          </p>
+        </div>
         <Button type="submit" variant="outlined">
           Submit
         </Button>

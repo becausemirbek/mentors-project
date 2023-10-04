@@ -2,7 +2,7 @@ import React, { createContext, useReducer, useState } from "react";
 import axios from "axios";
 import { ActionI } from "./helper";
 
-export const productsContext = createContext({});
+export const productsContext = createContext<any>(null);
 
 const INIT_STATE = {
   products: [],
@@ -37,12 +37,27 @@ const ProductsContextProvider = ({
 }) => {
   const [state, dispatch] = useReducer(reducer, INIT_STATE);
 
+  const getCategories = async () => {
+    try {
+      const tokens = JSON.parse(localStorage.getItem("tokens") as any);
+      const Auth = `Bearer ${tokens.access}`;
+      const config = {
+        headers: {
+          Authorization: Auth,
+        },
+      };
+      const res = await axios(`${API}/category/list/`, config);
+      console.log(res);
+    } catch (error) {}
+  };
+
   return (
     <productsContext.Provider
       value={{
         products: state.products,
         categories: state.categories,
         productDetails: state.productDetails,
+        getCategories,
       }}
     >
       {children}
