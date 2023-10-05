@@ -5,13 +5,14 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 // custom imports
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { authContext } from "../../context/authContext";
 // import SearchComponent from '../SearchComponent';
 
 function NavScrollExample() {
   const [currentUser, setCurrentUser] = useState<string | null>("");
   const isAdmin = currentUser === "mirbek@gmail.com";
   const navigate = useNavigate();
-  // const { handleLogout } = useContext(authContext);
+  const { handleSignOut } = useContext(authContext);
 
   useEffect(() => {
     const user = localStorage.getItem("email");
@@ -52,7 +53,9 @@ function NavScrollExample() {
                   My products
                 </NavDropdown.Item>
               )}
-              {/* <NavDropdown.Item onClick={() => handleLogout(navigate)}>Logout</NavDropdown.Item> */}
+              <NavDropdown.Item onClick={() => handleSignOut(navigate)}>
+                Logout
+              </NavDropdown.Item>
             </NavDropdown>
             <Nav.Link href="#" disabled>
               {currentUser ? currentUser : "No auth user"}

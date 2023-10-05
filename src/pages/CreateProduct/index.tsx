@@ -1,6 +1,7 @@
 import {
   Button,
   FormControl,
+  Input,
   InputLabel,
   MenuItem,
   Select,
@@ -8,13 +9,17 @@ import {
 } from "@mui/material";
 import React, { useContext, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { productsContext } from "../../context/productsContext";
+import "./style.css";
+import { useNavigate } from "react-router-dom";
 
-interface ProductI {
+export interface ProductI {
   title: string;
   description: string;
   price: string;
   category: number;
+  image: any;
 }
 
 const CreateProduct = () => {
@@ -24,10 +29,19 @@ const CreateProduct = () => {
     handleSubmit,
   } = useForm<ProductI>();
 
-  const { getCategories } = useContext(productsContext);
+  const { getCategories, categories, createProduct } =
+    useContext(productsContext);
+  const navigate = useNavigate();
 
   const onSubmit = (data: ProductI) => {
-    console.log(data);
+    const formData = new FormData();
+    formData.append("files", data.image);
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("price", data.price);
+    formData.append("category", data.category.toString());
+
+    createProduct(formData, navigate);
   };
 
   useEffect(() => {
@@ -49,7 +63,7 @@ const CreateProduct = () => {
             <TextField
               error={!!errors.title}
               helperText={errors.title?.message?.toString()}
-              label="Category name"
+              label="Title"
               {...field}
               type="text"
             />
@@ -70,27 +84,31 @@ const CreateProduct = () => {
           )}
         />
         <FormControl>
-          <InputLabel id="demo-select-small-label">Age</InputLabel>
+          <InputLabel id="demo-select-small-label">Category</InputLabel>
           <Controller
             control={control}
-            name="price"
+            name="category"
             rules={{ required: "Price is required" }}
             render={({ field }) => (
               <Select
                 {...field}
                 labelId="demo-select-small-label"
                 id="demo-select-small"
-                value={"12"}
-                label="Age"
-                onChange={(e) => console.log(e)}
-                error={!!errors.price}
+                value={field.value}
+                label="Category"
+                error={!!errors.category}
               >
                 <MenuItem value="">
                   <em>None</em>
                 </MenuItem>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                {categories &&
+                  categories.map(
+                    ({ title, id }: { title: string; id: number }) => (
+                      <MenuItem key={id} value={id}>
+                        {title}
+                      </MenuItem>
+                    )
+                  )}
               </Select>
             )}
           />
@@ -105,8 +123,32 @@ const CreateProduct = () => {
               helperText={errors.price?.message?.toString()}
               label="Price"
               {...field}
+              onChange={({ target: { value } }) =>
+                !isNaN(Number(value)) && field.onChange(value)
+              }
               type="text"
             />
+          )}
+        />
+        <Controller
+          control={control}
+          name="image"
+          rules={{ required: "Image is required" }}
+          render={({ field: { value, onChange, ...field } }) => (
+            <Button
+              component="label"
+              variant="contained"
+              startIcon={<CloudUploadIcon />}
+            >
+              Upload file
+              <Input
+                {...field}
+                className="uploadFile"
+                type="file"
+                value={value?.fileName}
+                onChange={({ target }: any) => onChange(target.files[0])}
+              />
+            </Button>
           )}
         />
         <Button type="submit" variant="outlined">

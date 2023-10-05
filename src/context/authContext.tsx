@@ -7,6 +7,7 @@ interface ContextI {
   currentUser: any;
   handleSignIn: any; // (data: any) => void;
   handleSignUp: any; // (data: any, navigate: (value: string) => void) => void;
+  handleSignOut: any; // (data: any, navigate: (value: string) => void) => void;
 }
 
 const initVal = {
@@ -15,6 +16,7 @@ const initVal = {
   currentUser: "",
   handleSignIn: () => {},
   handleSignUp: () => {},
+  handleSignOut: () => {},
 };
 
 export const authContext = createContext<ContextI>(initVal);
@@ -64,6 +66,13 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const handleSignOut = (navigate: (value: string) => void) => {
+    localStorage.removeItem("tokens");
+    localStorage.removeItem("email");
+    setCurrentUser("");
+    navigate("/sign-in");
+  };
+
   return (
     <authContext.Provider
       value={{
@@ -72,6 +81,7 @@ const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
         currentUser,
         handleSignIn,
         handleSignUp,
+        handleSignOut,
       }}
     >
       {children}
